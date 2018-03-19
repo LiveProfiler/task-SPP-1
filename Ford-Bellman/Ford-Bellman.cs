@@ -7,6 +7,7 @@ namespace Ford_Bellman
     public class FordBellman
     {
         private const int Inf = -32768;
+        private static readonly double LogInf = Math.Log(-Inf);
         private readonly int[][] weights;
         private readonly int size;
 
@@ -19,7 +20,7 @@ namespace Ford_Bellman
         public Path FindPath(int start, int end)
         {
             var dest = Enumerable
-                .Repeat(-Inf, size)
+                .Repeat(LogInf, size)
                 .ToArray();
             var pref = Enumerable
                 .Repeat(-1, size)
@@ -32,9 +33,10 @@ namespace Ford_Bellman
                 {
                     for (var j = 0; j < size; ++j)
                     {
-                        if (dest[j] - weights[j][i] < dest[i])
+                        var weight = double.IsInfinity(Math.Log(weights[j][i])) ? LogInf : Math.Log(weights[j][i]);
+                        if (dest[j] - weight < dest[i])
                         {
-                            dest[i] = Math.Min(-weights[j][i], dest[j] - weights[j][i]);
+                            dest[i] = dest[j] - weight;
                             pref[i] = j;
                             stop = true;
                         }
@@ -44,7 +46,7 @@ namespace Ford_Bellman
             return FindPath(start, end, dest, pref);
         }
 
-        private Path FindPath(int start, int end, IReadOnlyList<int> dest, IReadOnlyList<int> pref) 
+        private Path FindPath(int start, int end, IReadOnlyList<double> dest, IReadOnlyList<int> pref) 
         {
             if (dest[end] > 0) return Path.Empty;
             var path = new List<int>();

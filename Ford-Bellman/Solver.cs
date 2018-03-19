@@ -31,7 +31,7 @@ namespace Ford_Bellman
                 .Skip(1)
                 .Take(enumerable.Length - 3)
                 .Select(s => s
-                    .Split(' ')
+                    .Split(' ', '\t')
                     .Select(int.Parse)
                     .ToArray())
                 .ToArray();
